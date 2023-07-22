@@ -33,7 +33,8 @@ userRouter.get("/", auth, adminAuth, async (rea, res) => {
     const admin = await UserModel.findOne({ _id: userID });
     if (admin) {
       const allUser = await UserModel.find();
-      return res.status(200).json({ Users: allUser });
+      const totalCount = await UserModel.countDocuments();
+      return res.status(200).json({ Users: allUser, totalCount });
     } else {
       return res.status(404).json({ error: "Admin not Found...!!" });
     }
@@ -67,13 +68,13 @@ userRouter.post("/register", async (req, res) => {
     // checking password criteria  passValidator function
     if (!passValidator(password)) {
       return res.status(400).json({
-        msg: "Password should atleast contain 1 UpperCase letter, 1 Number and 1 Symbol",
+        msg: "Password should atleast contain 1 UpperCase letter, 1 Number and 1 Symbol & length >= 8",
       });
     }
     // checks if user is already present with the email
     const user = await UserModel.findOne({ email });
     if (user) {
-      return res.status(200).json({ msg: "user already present" });
+      return res.status(200).json({ msg: "User is already present" });
     } else {
       // after hasshing the password it get stored in the databas (MongoDB)
       bcrypt.hash(password, 5, async (err, hash) => {
@@ -86,7 +87,7 @@ userRouter.post("/register", async (req, res) => {
           });
 
           await user.save();
-          return res.status(200).json({ msg: "user created successfully" });
+          return res.status(200).json({ msg: "User Created Successfully" });
         }
       });
     }
@@ -110,9 +111,11 @@ userRouter.post("/login", async (req, res) => {
             process.env.secret,
             { expiresIn: "7d" }
           );
-          return res.status(200).json({ msg: "Login Successfull", token });
+          return res
+            .status(200)
+            .json({ msg: "Login Successfull", token, user }); // user details will rend in responce
         } else {
-          return res.status(404).json({ msg: "Wrong Cridentials" }); // if any error in password
+          return res.status(404).json({ msg: "Wrong Credentials....!!" }); // if any error in password
         }
       });
     } else {
@@ -138,7 +141,7 @@ userRouter.get("/logout", async (req, res) => {
 });
 
 // user can update his/her own details
-userRouter.patch("/", auth, async (rea, res) => {
+userRouter.patch("/", auth, async (req, res) => {
   const { userID } = req.body;
   try {
     const user = await UserModel.findOne({ _id: userID });
