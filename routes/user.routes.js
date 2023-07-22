@@ -51,7 +51,7 @@ userRouter.delete("/", auth, adminAuth, async (rea, res) => {
     if (user) {
       const deletedUser = await UserModel.findByIdAndDelete({ _id: userID });
       return res.status(200).json({
-        msg: "user has been deleted successfull",
+        msg: "User has been deleted successfull",
         deletedUse: deletedUser,
       });
     } else {
@@ -87,7 +87,9 @@ userRouter.post("/register", async (req, res) => {
           });
 
           await user.save();
-          return res.status(200).json({ msg: "User Created Successfully" });
+          return res
+            .status(200)
+            .json({ msg: "User Created Successfully", user: req.body });
         }
       });
     }

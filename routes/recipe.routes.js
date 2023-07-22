@@ -153,9 +153,7 @@ recipeRouter.get("/my-recipes", auth, async (req, res) => {
       .sort(sort)
       .skip(skip)
       .limit(pageSize);
-    const totalCount = await RecipeModel.countDocuments({
-      _id: String(req.body.userID),
-    });
+    const totalCount = await RecipeModel.countDocuments(query);
     res.status(200).json({ Messsage: "My Recipes", recipes, totalCount });
   } catch (error) {
     return res.status(500).json({ error: error.message });
