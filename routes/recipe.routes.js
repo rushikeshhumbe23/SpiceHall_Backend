@@ -77,7 +77,7 @@ recipeRouter.get("/", async (req, res) => {
 recipeRouter.get("/:recipeID", async (req, res) => {
   const { recipeID } = req.params;
   try {
-    const recipe = await RecipeModel.findOne({ _id: recipeID });
+    const recipe = await RecipeModel.findById({ _id: recipeID });
     if (recipe) {
       return res.status(200).json({ Messsage: "Recipe", recipe });
     } else {
