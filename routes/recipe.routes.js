@@ -90,10 +90,10 @@ recipeRouter.get("/:recipeID", async (req, res) => {
 });
 
 // public route deleting the recipe from database for the admin
-recipeRouter.delete("/:recipeID", adminAuth, async (req, res) => {
+recipeRouter.delete("/:recipeID", auth, adminAuth, async (req, res) => {
   const { recipeID } = req.params;
-  const recipe = await RecipeModel.findOne({ _id: recipeID });
   try {
+    const recipe = await RecipeModel.findOne({ _id: recipeID });
     if (recipe) {
       const deletedRecipe = await RecipeModel.findByIdAndDelete({
         _id: recipeID,
