@@ -75,10 +75,9 @@ recipeRouter.get("/", async (req, res) => {
 
 // single recipes route from the public route
 recipeRouter.get("/:recipeID", async (req, res) => {
-  const { recipeID } = req.params.recipeID;
+  const { recipeID } = req.params;
   try {
-    const recipe = await RecipeModel.findOne(recipeID);
-    // console.log(recipe);
+    const recipe = await RecipeModel.findOne({ _id: recipeID });
     if (recipe) {
       return res.status(200).json({ Messsage: "Recipe", recipe });
     } else {
